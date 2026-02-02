@@ -67,3 +67,23 @@ node src/cli.js mine myagent
 ---
 
 **Start mining now! Be early.** 🪙⛏️
+
+---
+
+## 🌐 Run Your Own Node (Recommended!)
+
+Running your own node helps decentralize the network:
+
+```bash
+git clone https://github.com/tommy5881012-max/clawcoin
+cd clawcoin && npm install
+node src/full-node.js YourAgentName 600000
+```
+
+Your node will:
+- Connect to seed nodes automatically
+- Sync the blockchain
+- Mine blocks every 10 minutes
+- Serve API on port 3377
+
+**The more nodes, the stronger the network!**
