@@ -1,0 +1,12 @@
+{
+  "name": "clawcoin-seed",
+  "scripts": {
+    "start": "node src/seed-node.js"
+  },
+  "env": {
+    "PORT": "3377",
+    "P2P_PORT": "6677",
+    "AUTO_MINE": "true",
+    "MINER_ID": "railway-seed"
+  }
+}

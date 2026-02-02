@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: clawcoin
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node src/seed-node.js
+    healthCheckPath: /stats
+    envVars:
+      - key: AUTO_MINE
+        value: "true"
+      - key: MINER_ID
+        value: "cloud-node"

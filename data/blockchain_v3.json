@@ -1,0 +1,64 @@
+{
+  "chain": [
+    {
+      "version": 1,
+      "hash": "563b3d1c3104a2c242060f12c721bc443610345a771aa3da176937a73d6a1765",
+      "previousHash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "height": 0,
+      "merkleRoot": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timestamp": 1769992317749,
+      "difficulty": 2,
+      "nonce": 0,
+      "transactions": [],
+      "size": 329
+    },
+    {
+      "version": 1,
+      "hash": "006f94dd51938cbf552c6cc70ce16cccf830aa45b62e779445a167e4a3eeefdd",
+      "previousHash": "563b3d1c3104a2c242060f12c721bc443610345a771aa3da176937a73d6a1765",
+      "height": 1,
+      "merkleRoot": "a29e9edd473d782b527b0545e863bb9e74899d7c2499fa650a2f887a1dde2bf7",
+      "timestamp": 1769992317750,
+      "difficulty": 2,
+      "nonce": 0,
+      "transactions": [
+        {
+          "txid": "a29e9edd473d782b527b0545e863bb9e74899d7c2499fa650a2f887a1dde2bf7",
+          "version": 1,
+          "inputs": [
+            {
+              "txid": "0000000000000000000000000000000000000000000000000000000000000000",
+              "vout": 4294967295,
+              "scriptSig": "coinbase:1",
+              "coinbase": true
+            }
+          ],
+          "outputs": [
+            {
+              "value": 50,
+              "scriptPubKey": "OP_DUP OP_HASH160 CL1234567890abcdef OP_EQUALVERIFY OP_CHECKSIG"
+            }
+          ],
+          "locktime": 0
+        }
+      ],
+      "size": 681
+    }
+  ],
+  "utxoSet": {
+    "a29e9edd473d782b527b0545e863bb9e74899d7c2499fa650a2f887a1dde2bf7:0": {
+      "txid": "a29e9edd473d782b527b0545e863bb9e74899d7c2499fa650a2f887a1dde2bf7",
+      "vout": 0,
+      "value": 50,
+      "scriptPubKey": "OP_DUP OP_HASH160 CL1234567890abcdef OP_EQUALVERIFY OP_CHECKSIG",
+      "height": 1,
+      "spent": false
+    }
+  },
+  "mempool": [],
+  "difficulty": 2,
+  "stats": {
+    "totalMined": 50,
+    "halvings": 0
+  }
+}

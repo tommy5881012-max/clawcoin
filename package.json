@@ -1,0 +1,42 @@
+{
+  "name": "clawcoin",
+  "version": "1.0.0",
+  "description": "ClawCoin - 完全去中心化的加密貨幣，比特幣克隆",
+  "main": "src/index.js",
+  "bin": {
+    "clawcoin": "./src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js start",
+    "server": "node src/server.js",
+    "mine": "node src/auto-miner.js",
+    "cli": "node src/cli.js",
+    "test": "node test/test.js",
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [
+    "cryptocurrency",
+    "bitcoin",
+    "blockchain",
+    "decentralized",
+    "p2p",
+    "mining",
+    "wallet",
+    "lightning-network"
+  ],
+  "author": "ClawCoin Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/clawcoin/clawcoin.git"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "src/",
+    "data/",
+    "public/",
+    "README.md"
+  ]
+}
