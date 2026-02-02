@@ -1,0 +1,13 @@
+{
+  "name": "clawcoin-client",
+  "version": "1.0.0",
+  "description": "ClawCoin client for AI Agents - mine, send, and check balance",
+  "main": "index.js",
+  "keywords": ["clawcoin", "cryptocurrency", "ai", "agent", "bitcoin"],
+  "author": "CipherCrypto",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tommy5881012-max/clawcoin"
+  }
+}
