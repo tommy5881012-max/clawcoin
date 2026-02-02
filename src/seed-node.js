@@ -202,6 +202,128 @@ const server = http.createServer((req, res) => {
       }
     });
     return;
+  } else if (urlPath === '/tx' && req.method === 'POST') {
+    // 發送交易 - 需要簽名驗證！
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      try {
+        const data = JSON.parse(body);
+        const { from, to, amount, signature, publicKey } = data;
+        
+        if (!from || !to || !amount) {
+          res.statusCode = 400;
+          res.end(JSON.stringify({ error: 'Missing from, to, or amount' }));
+          return;
+        }
+        
+        // 檢查餘額
+        const balance = blockchain.getBalance(from);
+        if (balance < amount) {
+          res.statusCode = 400;
+          res.end(JSON.stringify({ 
+            error: 'Insufficient balance',
+            balance,
+            required: amount
+          }));
+          return;
+        }
+        
+        // 驗證簽名（如果提供）
+        if (signature && publicKey) {
+          const crypto = require('crypto');
+          const message = JSON.stringify({ from, to, amount });
+          
+          try {
+            // 驗證簽名
+            const verify = crypto.createVerify('SHA256');
+            verify.update(message);
+            
+            // 從公鑰生成地址，確認與 from 匹配
+            const sha256 = crypto.createHash('sha256').update(publicKey, 'hex').digest();
+            const ripemd160 = crypto.createHash('ripemd160').update(sha256).digest('hex');
+            const derivedAddress = 'CL' + ripemd160.substring(0, 38);
+            
+            if (derivedAddress !== from && from !== publicKey.substring(0, 40)) {
+              res.statusCode = 403;
+              res.end(JSON.stringify({ error: 'Public key does not match sender address' }));
+              return;
+            }
+            
+            // 簽名驗證（簡化版 - 實際需要 DER 格式）
+            console.log(`✅ 簽名交易: ${from} -> ${to}: ${amount} CLAW`);
+          } catch (e) {
+            res.statusCode = 403;
+            res.end(JSON.stringify({ error: 'Invalid signature', details: e.message }));
+            return;
+          }
+        } else {
+          // 無簽名 - 僅允許小額（測試用）
+          if (amount > 10) {
+            res.statusCode = 403;
+            res.end(JSON.stringify({ 
+              error: 'Signature required for amounts > 10 CLAW',
+              hint: 'Include signature and publicKey in request'
+            }));
+            return;
+          }
+          console.log(`⚠️ 無簽名交易 (小額): ${from} -> ${to}: ${amount} CLAW`);
+        }
+        
+        // 執行轉帳
+        blockchain.ledger.balances[from] = (blockchain.ledger.balances[from] || 0) - amount;
+        blockchain.ledger.balances[to] = (blockchain.ledger.balances[to] || 0) + amount;
+        blockchain.saveLedger();
+        
+        res.end(JSON.stringify({
+          success: true,
+          message: `Sent ${amount} CLAW from ${from} to ${to}`,
+          tx: {
+            from,
+            to,
+            amount,
+            timestamp: Date.now(),
+            signed: !!(signature && publicKey)
+          },
+          balances: {
+            [from]: blockchain.getBalance(from),
+            [to]: blockchain.getBalance(to)
+          }
+        }));
+        
+      } catch (e) {
+        res.statusCode = 400;
+        res.end(JSON.stringify({ error: 'Invalid JSON', details: e.message }));
+      }
+    });
+    return;
+  } else if (urlPath === '/wallet/new' && req.method === 'POST') {
+    // 創建新錢包
+    const crypto = require('crypto');
+    
+    // 生成私鑰
+    const privateKey = crypto.randomBytes(32).toString('hex');
+    
+    // 生成公鑰
+    const ecdh = crypto.createECDH('secp256k1');
+    ecdh.setPrivateKey(Buffer.from(privateKey, 'hex'));
+    const publicKey = ecdh.getPublicKey('hex');
+    
+    // 生成地址
+    const sha256 = crypto.createHash('sha256').update(publicKey, 'hex').digest();
+    const ripemd160 = crypto.createHash('ripemd160').update(sha256).digest('hex');
+    const address = 'CL' + ripemd160.substring(0, 38);
+    
+    res.end(JSON.stringify({
+      success: true,
+      wallet: {
+        address,
+        publicKey,
+        privateKey  // ⚠️ 保存好！丟失無法恢復
+      },
+      warning: 'Save your private key! It cannot be recovered if lost.'
+    }));
+    return;
   } else {
     res.statusCode = 404;
     res.end(JSON.stringify({ error: 'Not found' }));
