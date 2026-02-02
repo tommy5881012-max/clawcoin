@@ -100,6 +100,108 @@ const server = http.createServer((req, res) => {
     }));
   } else if (urlPath === '/health') {
     res.end(JSON.stringify({ status: 'ok', uptime: process.uptime() }));
+  } else if (urlPath === '/mine' && req.method === 'POST') {
+    // HTTP 挖礦 API - 讓其他人可以透過 HTTP 挖礦
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      try {
+        const data = JSON.parse(body);
+        const minerId = data.minerId || data.agentId || 'anonymous';
+        
+        // 執行挖礦
+        const result = blockchain.mine(minerId, `http-mining-${Date.now()}`);
+        
+        if (result.success) {
+          console.log(`⛏️ HTTP 挖礦: ${minerId} | 區塊 #${result.blockIndex}`);
+          res.end(JSON.stringify({
+            success: true,
+            message: `Mined block #${result.blockIndex}!`,
+            block: result.blockIndex,
+            reward: result.reward,
+            miner: minerId,
+            balance: blockchain.getBalance(minerId)
+          }));
+        } else {
+          res.end(JSON.stringify({ success: false, error: result.error }));
+        }
+      } catch (e) {
+        res.statusCode = 400;
+        res.end(JSON.stringify({ error: 'Invalid JSON. Send: {"minerId": "your-name"}' }));
+      }
+    });
+    return;
+  } else if (urlPath === '/register' && req.method === 'POST') {
+    // 註冊新礦工
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      try {
+        const data = JSON.parse(body);
+        const minerId = data.minerId || data.agentId;
+        if (!minerId) {
+          res.statusCode = 400;
+          res.end(JSON.stringify({ error: 'minerId required' }));
+          return;
+        }
+        
+        // 記錄礦工（簡單版本）
+        const stats = blockchain.getStats();
+        res.end(JSON.stringify({
+          success: true,
+          message: `Welcome ${minerId}! Start mining with POST /mine`,
+          minerId,
+          currentBlock: stats.totalBlocks,
+          reward: stats.currentBlockReward,
+          howToMine: 'POST /mine with {"minerId": "' + minerId + '"}'
+        }));
+      } catch (e) {
+        res.statusCode = 400;
+        res.end(JSON.stringify({ error: 'Invalid JSON' }));
+      }
+    });
+    return;
+  } else if (urlPath === '/faucet' && req.method === 'POST') {
+    // 水龍頭 - 給新礦工一點初始幣
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      try {
+        const data = JSON.parse(body);
+        const address = data.address || data.minerId;
+        if (!address) {
+          res.statusCode = 400;
+          res.end(JSON.stringify({ error: 'address required' }));
+          return;
+        }
+        
+        // 檢查是否已領取
+        const balance = blockchain.getBalance(address);
+        if (balance > 0) {
+          res.end(JSON.stringify({ 
+            success: false, 
+            error: 'Already claimed',
+            balance 
+          }));
+          return;
+        }
+        
+        // 給 10 CLAW
+        blockchain.ledger.balances[address] = 10;
+        blockchain.saveLedger();
+        
+        res.end(JSON.stringify({
+          success: true,
+          message: `Sent 10 CLAW to ${address}`,
+          balance: 10,
+          tip: 'Now mine more with POST /mine!'
+        }));
+      } catch (e) {
+        res.statusCode = 400;
+        res.end(JSON.stringify({ error: 'Invalid JSON' }));
+      }
+    });
+    return;
   } else {
     res.statusCode = 404;
     res.end(JSON.stringify({ error: 'Not found' }));
