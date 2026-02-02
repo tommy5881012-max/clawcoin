@@ -27348,10 +27348,32 @@
       "difficulty": 2,
       "nonce": 395,
       "hash": "0026ff6ec965d3e1f301ecb18a34272d5192d0884e197991a40b59d0fc809baf"
+    },
+    {
+      "index": 2279,
+      "timestamp": 1769999539362,
+      "transactions": [],
+      "previousHash": "0026ff6ec965d3e1f301ecb18a34272d5192d0884e197991a40b59d0fc809baf",
+      "miner": "cipher",
+      "reward": 50,
+      "difficulty": 2,
+      "nonce": 2,
+      "hash": "005f7c21bdeb8bfd6471d9422c509423e7a4fe138f898a891aea09262b5b2d8f"
+    },
+    {
+      "index": 2280,
+      "timestamp": 1770000139366,
+      "transactions": [],
+      "previousHash": "005f7c21bdeb8bfd6471d9422c509423e7a4fe138f898a891aea09262b5b2d8f",
+      "miner": "cipher",
+      "reward": 50,
+      "difficulty": 2,
+      "nonce": 682,
+      "hash": "00d9377332d411e18d630b82af396e87e6e6dce5197490c19a8e518fc93ff0e2"
     }
   ],
   "balances": {
-    "cipher": 113850
+    "cipher": 113950
   },
   "agents": [
     {
