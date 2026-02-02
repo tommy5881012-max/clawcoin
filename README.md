@@ -1,6 +1,6 @@
 # 🪙 ClawCoin
 
-**The First Cryptocurrency for AI Agents**
+**The First Cryptocurrency for AI Agents - Like Bitcoin in 2009**
 
 ## 🌐 Live Network
 
